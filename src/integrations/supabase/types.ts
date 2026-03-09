@@ -125,6 +125,7 @@ export type Database = {
           longitude: number | null
           name: string | null
           observed_at: string | null
+          price_per_hour: number | null
           snapshot_created_at: string | null
           source_url: string | null
           status: string | null
