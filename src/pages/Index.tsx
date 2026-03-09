@@ -14,6 +14,13 @@ const Index = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('list');
   const [isScraping, setIsScraping] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'limited' | 'full'>('all');
+
+  const filteredCourts = useMemo(() => {
+    if (!courts) return [];
+    if (statusFilter === 'all') return courts;
+    return courts.filter((c) => c.status === statusFilter);
+  }, [courts, statusFilter]);
 
   const handleRefresh = async () => {
     await refetch();
