@@ -1,4 +1,4 @@
-import { ExternalLink, MapPin, Clock, Info } from 'lucide-react';
+import { ExternalLink, MapPin, Clock, Info, Timer } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { Court } from '@/types/court';
@@ -26,6 +26,7 @@ export const CourtList = ({ courts }: CourtListProps) => {
         const lastUpdate = court.observed_at
           ? formatDistanceToNow(new Date(court.observed_at), { addSuffix: true })
           : null;
+        const nextTime = court.details?.next_available_time as string | undefined;
 
         return (
           <Card
@@ -61,6 +62,12 @@ export const CourtList = ({ courts }: CourtListProps) => {
                     {court.available_courts}
                     <span className="text-muted-foreground text-base font-medium">/{court.total_courts}</span>
                     <span className="text-xs font-body text-muted-foreground ml-1.5 uppercase tracking-wide">courts open</span>
+                  </div>
+                )}
+                {nextTime && (
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                    <Timer className="h-3 w-3" />
+                    <span className="font-display uppercase tracking-wide">Next: {nextTime}</span>
                   </div>
                 )}
                 {lastUpdate && (
