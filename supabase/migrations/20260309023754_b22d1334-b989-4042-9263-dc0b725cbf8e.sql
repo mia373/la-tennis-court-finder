@@ -1,0 +1,1 @@
+ALTER TABLE public.court_sources ADD COLUMN price_per_hour numeric(6,2) DEFAULT NULL;
