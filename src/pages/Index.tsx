@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { RefreshCw, List, Map as MapIcon, Activity } from 'lucide-react';
+import { RefreshCw, List, Map as MapIcon, Activity, Zap, Trophy } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,54 +39,76 @@ const Index = () => {
   const limitedCount = courts?.filter((c) => c.status === 'limited').length ?? 0;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-5xl py-10 space-y-8">
-        {/* Header */}
-        <div className="space-y-3">
+    <div className="min-h-screen bg-background sport-stripe">
+      {/* Hero header */}
+      <div className="bg-foreground text-primary-foreground">
+        <div className="container max-w-5xl py-8 space-y-4">
           <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight">🎾 West LA Tennis Courts</h1>
-              <p className="text-muted-foreground mt-1 text-base">
-                Live availability for top courts in West Los Angeles
-              </p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-primary">
+                  <Trophy className="h-6 w-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight">
+                    West LA Courts
+                  </h1>
+                  <p className="text-primary-foreground/60 text-sm font-medium uppercase tracking-widest">
+                    Live Tennis Court Availability
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <Button onClick={handleRefresh} disabled={isRefetching} variant="outline" size="icon">
+            <div className="flex items-center gap-2 flex-shrink-0 pt-2">
+              <Button
+                onClick={handleRefresh}
+                disabled={isRefetching}
+                variant="outline"
+                size="icon"
+                className="border-primary-foreground/20 bg-transparent text-primary-foreground hover:bg-primary-foreground/10"
+              >
                 <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
               </Button>
-              <Button onClick={handleScrape} disabled={isScraping} variant="outline" size="sm">
-                <Activity className={`h-4 w-4 mr-2 ${isScraping ? 'animate-pulse' : ''}`} />
-                {isScraping ? 'Checking...' : 'Check Now'}
+              <Button
+                onClick={handleScrape}
+                disabled={isScraping}
+                size="sm"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold uppercase tracking-wide text-xs"
+              >
+                <Zap className={`h-4 w-4 mr-1.5 ${isScraping ? 'animate-pulse-live' : ''}`} />
+                {isScraping ? 'Scanning...' : 'Live Check'}
               </Button>
             </div>
           </div>
 
-          {/* Summary stats */}
+          {/* Stats bar */}
           {!isLoading && courts && courts.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="default" className="gap-1">
-                <div className="h-2 w-2 rounded-full bg-green-400" />
-                {availableCount} Available
-              </Badge>
-              <Badge variant="secondary" className="gap-1">
-                <div className="h-2 w-2 rounded-full bg-yellow-400" />
-                {limitedCount} Limited
-              </Badge>
-              <Badge variant="outline" className="gap-1">
-                {courts.length} Total Courts
-              </Badge>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <div className="flex items-center gap-2 bg-primary-foreground/10 px-3 py-1.5 rounded-md">
+                <div className="h-2.5 w-2.5 rounded-full bg-court-available animate-pulse-live" />
+                <span className="font-display text-sm font-semibold uppercase">{availableCount} Open</span>
+              </div>
+              <div className="flex items-center gap-2 bg-primary-foreground/10 px-3 py-1.5 rounded-md">
+                <div className="h-2.5 w-2.5 rounded-full bg-court-limited" />
+                <span className="font-display text-sm font-semibold uppercase">{limitedCount} Limited</span>
+              </div>
+              <div className="flex items-center gap-2 bg-primary-foreground/10 px-3 py-1.5 rounded-md">
+                <span className="font-display text-sm font-semibold uppercase">{courts.length} Total</span>
+              </div>
             </div>
           )}
         </div>
+      </div>
 
-        {/* Tabs */}
+      {/* Main content */}
+      <div className="container max-w-5xl py-8 space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-xs grid-cols-2">
-            <TabsTrigger value="list" className="flex items-center gap-2">
+          <TabsList className="grid w-full max-w-xs grid-cols-2 bg-secondary">
+            <TabsTrigger value="list" className="flex items-center gap-2 font-display uppercase text-sm font-semibold tracking-wide">
               <List className="h-4 w-4" />
               List
             </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center gap-2">
+            <TabsTrigger value="map" className="flex items-center gap-2 font-display uppercase text-sm font-semibold tracking-wide">
               <MapIcon className="h-4 w-4" />
               Map
             </TabsTrigger>
@@ -103,7 +125,8 @@ const Index = () => {
               <CourtList courts={courts} />
             ) : (
               <div className="text-center py-16 text-muted-foreground">
-                <p>No courts found. Click <strong>Check Now</strong> to fetch live data.</p>
+                <p className="font-display text-lg uppercase">No courts found</p>
+                <p className="text-sm mt-1">Click <strong>Live Check</strong> to fetch live data.</p>
               </div>
             )}
           </TabsContent>
@@ -115,15 +138,16 @@ const Index = () => {
               <CourtMap courts={courts} />
             ) : (
               <div className="text-center py-16 text-muted-foreground">
-                <p>No courts found. Click <strong>Check Now</strong> to fetch live data.</p>
+                <p className="font-display text-lg uppercase">No courts found</p>
+                <p className="text-sm mt-1">Click <strong>Live Check</strong> to fetch live data.</p>
               </div>
             )}
           </TabsContent>
         </Tabs>
 
         {/* Footer */}
-        <div className="text-center text-sm text-muted-foreground pt-6 border-t">
-          <p>Data refreshes automatically every 5 minutes · All booking links go to official websites</p>
+        <div className="text-center text-xs text-muted-foreground pt-6 border-t font-medium uppercase tracking-wider">
+          <p>Auto-refresh every 5 min · Official booking links only</p>
         </div>
       </div>
     </div>
