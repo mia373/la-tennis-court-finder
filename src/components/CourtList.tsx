@@ -64,6 +64,12 @@ export const CourtList = ({ courts }: CourtListProps) => {
                     <span className="text-xs font-body text-muted-foreground ml-1.5 uppercase tracking-wide">courts open</span>
                   </div>
                 )}
+                {court.price_per_hour !== null && (
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-accent">
+                    <DollarSign className="h-3 w-3" />
+                    <span className="font-display uppercase tracking-wide">${court.price_per_hour}/hr</span>
+                  </div>
+                )}
                 {nextTime && (
                   <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
                     <Timer className="h-3 w-3" />
