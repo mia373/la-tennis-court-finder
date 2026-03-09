@@ -26,6 +26,7 @@ export const CourtList = ({ courts }: CourtListProps) => {
         const lastUpdate = court.observed_at
           ? formatDistanceToNow(new Date(court.observed_at), { addSuffix: true })
           : null;
+        const nextTime = court.details?.next_available_time as string | undefined;
 
         return (
           <Card
