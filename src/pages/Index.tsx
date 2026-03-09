@@ -151,16 +151,35 @@ const Index = () => {
       {/* Main content */}
       <div className="container max-w-5xl py-8 space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-xs grid-cols-2 bg-secondary">
-            <TabsTrigger value="list" className="flex items-center gap-2 font-display uppercase text-sm font-semibold tracking-wide">
-              <List className="h-4 w-4" />
-              List
-            </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center gap-2 font-display uppercase text-sm font-semibold tracking-wide">
-              <MapIcon className="h-4 w-4" />
-              Map
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <TabsList className="grid w-full max-w-xs grid-cols-2 bg-secondary">
+              <TabsTrigger value="list" className="flex items-center gap-2 font-display uppercase text-sm font-semibold tracking-wide">
+                <List className="h-4 w-4" />
+                List
+              </TabsTrigger>
+              <TabsTrigger value="map" className="flex items-center gap-2 font-display uppercase text-sm font-semibold tracking-wide">
+                <MapIcon className="h-4 w-4" />
+                Map
+              </TabsTrigger>
+            </TabsList>
+
+            <div className="flex items-center gap-1.5">
+              <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+              {(['name', 'price', 'availability'] as const).map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => setSortBy(opt)}
+                  className={`px-2.5 py-1 rounded-md text-xs font-display uppercase font-semibold tracking-wide transition-colors cursor-pointer ${
+                    sortBy === opt
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                  }`}
+                >
+                  {opt === 'availability' ? 'Avail.' : opt}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <TabsContent value="list" className="mt-6">
             {isLoading ? (
