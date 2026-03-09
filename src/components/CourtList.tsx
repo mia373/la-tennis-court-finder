@@ -1,4 +1,4 @@
-import { ExternalLink, MapPin, Clock, Info, Timer } from 'lucide-react';
+import { ExternalLink, MapPin, Clock, Info, Timer, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { Court } from '@/types/court';
