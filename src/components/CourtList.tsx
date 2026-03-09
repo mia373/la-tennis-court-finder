@@ -64,6 +64,12 @@ export const CourtList = ({ courts }: CourtListProps) => {
                     <span className="text-xs font-body text-muted-foreground ml-1.5 uppercase tracking-wide">courts open</span>
                   </div>
                 )}
+                {nextTime && (
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                    <Timer className="h-3 w-3" />
+                    <span className="font-display uppercase tracking-wide">Next: {nextTime}</span>
+                  </div>
+                )}
                 {lastUpdate && (
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <Clock className="h-3 w-3" />
