@@ -166,8 +166,8 @@ const Index = () => {
           <TabsContent value="map" className="mt-6">
             {isLoading ? (
               <div className="h-[500px] rounded-lg bg-muted animate-pulse" />
-            ) : courts && courts.length > 0 ? (
-              <CourtMap courts={courts} />
+            ) : filteredCourts.length > 0 ? (
+              <CourtMap courts={filteredCourts} />
             ) : (
               <div className="text-center py-16 text-muted-foreground">
                 <p className="font-display text-lg uppercase">No courts found</p>
