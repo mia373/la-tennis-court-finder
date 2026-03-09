@@ -11,7 +11,11 @@ export interface Court {
   status: 'available' | 'limited' | 'full' | 'unknown' | null;
   available_courts: number | null;
   total_courts: number | null;
-  details: Record<string, unknown> | null;
+  details: {
+    next_available_time?: string;
+    raw_preview?: string;
+    [key: string]: unknown;
+  } | null;
   observed_at: string | null;
   snapshot_created_at: string | null;
 }
