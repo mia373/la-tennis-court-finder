@@ -55,7 +55,7 @@ const FitBounds = ({ courts }: { courts: Court[] }) => {
       map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
     }
   }, [courts, map]);
-  return <></>;
+  return null;
 };
 
 export const CourtMap = ({ courts }: CourtMapProps) => {
