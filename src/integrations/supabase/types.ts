@@ -14,10 +14,121 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      court_availability_snapshots: {
+        Row: {
+          available_courts: number | null
+          court_source_id: string
+          created_at: string
+          details: Json
+          id: string
+          observed_at: string
+          status: string
+          total_courts: number | null
+        }
+        Insert: {
+          available_courts?: number | null
+          court_source_id: string
+          created_at?: string
+          details?: Json
+          id?: string
+          observed_at?: string
+          status: string
+          total_courts?: number | null
+        }
+        Update: {
+          available_courts?: number | null
+          court_source_id?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          observed_at?: string
+          status?: string
+          total_courts?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "court_availability_snapshots_court_source_id_fkey"
+            columns: ["court_source_id"]
+            isOneToOne: false
+            referencedRelation: "court_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "court_availability_snapshots_court_source_id_fkey"
+            columns: ["court_source_id"]
+            isOneToOne: false
+            referencedRelation: "public_court_availability"
+            referencedColumns: ["court_source_id"]
+          },
+        ]
+      }
+      court_sources: {
+        Row: {
+          address: string | null
+          area: string
+          booking_url: string
+          created_at: string
+          id: string
+          is_active: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          parser_type: string
+          source_url: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          area?: string
+          booking_url: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          parser_type?: string
+          source_url: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          area?: string
+          booking_url?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          parser_type?: string
+          source_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      public_court_availability: {
+        Row: {
+          address: string | null
+          area: string | null
+          available_courts: number | null
+          booking_url: string | null
+          court_source_id: string | null
+          details: Json | null
+          is_active: boolean | null
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          observed_at: string | null
+          snapshot_created_at: string | null
+          source_url: string | null
+          status: string | null
+          total_courts: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
