@@ -9,6 +9,7 @@ export interface Court {
   booking_url: string;
   is_active: boolean;
   status: 'available' | 'limited' | 'full' | 'unknown' | null;
+  price_per_hour: number | null;
   available_courts: number | null;
   total_courts: number | null;
   details: {
