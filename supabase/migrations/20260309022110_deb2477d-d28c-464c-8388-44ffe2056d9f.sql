@@ -1,0 +1,6 @@
+INSERT INTO public.court_sources (name, address, area, source_url, booking_url, latitude, longitude, parser_type) VALUES
+('Rancho Park Tennis Courts', '2553 Motor Ave, Los Angeles, CA 90064', 'West LA', 'https://www.laparks.org/reccenter/rancho-park', 'https://www.laparks.org/reccenter/rancho-park', 34.0372, -118.4148, 'generic'),
+('Westchester Recreation Center', '7000 W Manchester Ave, Los Angeles, CA 90045', 'West LA', 'https://www.laparks.org/reccenter/westchester', 'https://www.laparks.org/reccenter/westchester', 33.9592, -118.4081, 'generic'),
+('Mar Vista Recreation Center', '11430 Woodbine St, Los Angeles, CA 90066', 'West LA', 'https://www.laparks.org/reccenter/mar-vista', 'https://www.laparks.org/reccenter/mar-vista', 34.0028, -118.4295, 'generic'),
+('Stoner Recreation Center', '1835 Stoner Ave, Los Angeles, CA 90025', 'West LA', 'https://www.laparks.org/reccenter/stoner', 'https://www.laparks.org/reccenter/stoner', 34.0380, -118.4530, 'generic'),
+('Glen Alla Park', '4601 Alla Rd, Los Angeles, CA 90066', 'West LA', 'https://www.laparks.org/park/glen-alla', 'https://www.laparks.org/park/glen-alla', 33.9930, -118.4380, 'generic');
