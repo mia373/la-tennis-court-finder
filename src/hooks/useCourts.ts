@@ -22,6 +22,7 @@ export const useCourts = () => {
         booking_url: row.booking_url ?? '',
         is_active: row.is_active ?? true,
         status: (row.status as Court['status']) ?? null,
+        price_per_hour: (row as any).price_per_hour ?? null,
         details: (row.details as Record<string, unknown>) ?? null,
       })) as Court[];
     },
