@@ -74,6 +74,7 @@ export type Database = {
           longitude: number | null
           name: string
           parser_type: string
+          price_per_hour: number | null
           source_url: string
           updated_at: string
         }
@@ -88,6 +89,7 @@ export type Database = {
           longitude?: number | null
           name: string
           parser_type?: string
+          price_per_hour?: number | null
           source_url: string
           updated_at?: string
         }
@@ -102,6 +104,7 @@ export type Database = {
           longitude?: number | null
           name?: string
           parser_type?: string
+          price_per_hour?: number | null
           source_url?: string
           updated_at?: string
         }
