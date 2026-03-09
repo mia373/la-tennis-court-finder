@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { RefreshCw, List, Map as MapIcon, Activity, Zap, Trophy } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { RefreshCw, List, Map as MapIcon, Activity, Zap, Trophy, Filter } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
