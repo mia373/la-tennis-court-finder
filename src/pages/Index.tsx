@@ -15,12 +15,28 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('list');
   const [isScraping, setIsScraping] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'limited' | 'full'>('all');
+  const [sortBy, setSortBy] = useState<'name' | 'price' | 'availability'>('name');
+
+  const STATUS_ORDER: Record<string, number> = { available: 0, limited: 1, full: 2, unknown: 3 };
 
   const filteredCourts = useMemo(() => {
     if (!courts) return [];
-    if (statusFilter === 'all') return courts;
-    return courts.filter((c) => c.status === statusFilter);
-  }, [courts, statusFilter]);
+    let result = statusFilter === 'all' ? [...courts] : courts.filter((c) => c.status === statusFilter);
+    
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'price':
+          return (a.price_per_hour ?? 999) - (b.price_per_hour ?? 999);
+        case 'availability':
+          return (STATUS_ORDER[a.status ?? 'unknown'] ?? 3) - (STATUS_ORDER[b.status ?? 'unknown'] ?? 3);
+        case 'name':
+        default:
+          return (a.name ?? '').localeCompare(b.name ?? '');
+      }
+    });
+    
+    return result;
+  }, [courts, statusFilter, sortBy]);
 
   const handleRefresh = async () => {
     await refetch();
