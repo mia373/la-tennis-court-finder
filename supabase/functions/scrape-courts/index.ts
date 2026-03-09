@@ -14,11 +14,10 @@ interface CourtSource {
   booking_url: string;
 }
 
-// Attempt to scrape a court page for availability signals using Firecrawl
 async function scrapeCourtPage(
   sourceUrl: string,
   firecrawlKey: string
-): Promise<{ status: "available" | "limited" | "full" | "unknown"; available: number | null; total: number | null; raw: string }> {
+): Promise<{ status: "available" | "limited" | "full" | "unknown"; available: number | null; total: number | null; nextAvailableTime: string | null; raw: string }> {
   try {
     const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
@@ -36,7 +35,7 @@ async function scrapeCourtPage(
 
     if (!response.ok) {
       console.warn(`Firecrawl returned ${response.status} for ${sourceUrl}`);
-      return { status: "unknown", available: null, total: null, raw: "" };
+      return { status: "unknown", available: null, total: null, nextAvailableTime: null, raw: "" };
     }
 
     const data = await response.json();
@@ -45,13 +44,13 @@ async function scrapeCourtPage(
     return parseAvailabilityFromMarkdown(markdown);
   } catch (err) {
     console.error("Firecrawl error:", err);
-    return { status: "unknown", available: null, total: null, raw: "" };
+    return { status: "unknown", available: null, total: null, nextAvailableTime: null, raw: "" };
   }
 }
 
 function parseAvailabilityFromMarkdown(
   text: string
-): { status: "available" | "limited" | "full" | "unknown"; available: number | null; total: number | null; raw: string } {
+): { status: "available" | "limited" | "full" | "unknown"; available: number | null; total: number | null; nextAvailableTime: string | null; raw: string } {
   const lower = text.toLowerCase();
 
   // Look for "X courts available" or "X of Y courts"
@@ -90,7 +89,34 @@ function parseAvailabilityFromMarkdown(
     status = "full";
   }
 
-  return { status, available, total, raw: text.slice(0, 500) };
+  // Parse next available time from common patterns
+  let nextAvailableTime: string | null = null;
+  
+  // Match patterns like "next available: 2:00 PM", "available at 3:30 pm", "next slot: 10:00 AM"
+  const timePatterns = [
+    /next\s+(?:available|slot|opening)[:\s]+(\d{1,2}:\d{2}\s*[ap]m)/i,
+    /available\s+(?:at|from)\s+(\d{1,2}:\d{2}\s*[ap]m)/i,
+    /(\d{1,2}:\d{2}\s*[ap]m)\s+(?:available|open)/i,
+    /book\s+(?:at|for)\s+(\d{1,2}:\d{2}\s*[ap]m)/i,
+  ];
+  
+  for (const pattern of timePatterns) {
+    const match = text.match(pattern);
+    if (match) {
+      nextAvailableTime = match[1].trim().toUpperCase();
+      break;
+    }
+  }
+
+  // If no specific time found, look for time slots in general (first time that appears in an "available" context)
+  if (!nextAvailableTime) {
+    const timeSlotMatch = text.match(/(\d{1,2}:\d{2}\s*[ap]m)/i);
+    if (timeSlotMatch && (lower.includes("available") || lower.includes("open") || lower.includes("book"))) {
+      nextAvailableTime = timeSlotMatch[1].trim().toUpperCase();
+    }
+  }
+
+  return { status, available, total, nextAvailableTime, raw: text.slice(0, 500) };
 }
 
 Deno.serve(async (req) => {
@@ -104,7 +130,6 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(supabaseUrl, serviceKey);
 
-  // Get active court sources
   const { data: courts, error: fetchError } = await supabase
     .from("court_sources")
     .select("id, name, source_url, booking_url")
@@ -126,8 +151,7 @@ Deno.serve(async (req) => {
       if (firecrawlKey) {
         result = await scrapeCourtPage(court.source_url, firecrawlKey);
       } else {
-        // No API key — produce unknown status
-        result = { status: "unknown" as const, available: null, total: null, raw: "" };
+        result = { status: "unknown" as const, available: null, total: null, nextAvailableTime: null, raw: "" };
       }
 
       const { error: insertError } = await supabase
@@ -137,7 +161,10 @@ Deno.serve(async (req) => {
           status: result.status,
           available_courts: result.available,
           total_courts: result.total,
-          details: { raw_preview: result.raw },
+          details: {
+            raw_preview: result.raw,
+            next_available_time: result.nextAvailableTime,
+          },
           observed_at: new Date().toISOString(),
         });
 
