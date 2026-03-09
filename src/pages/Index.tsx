@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { RefreshCw, List, Map as MapIcon, Activity, Zap, Trophy } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { RefreshCw, List, Map as MapIcon, Activity, Zap, Trophy, Filter } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,13 @@ const Index = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('list');
   const [isScraping, setIsScraping] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'limited' | 'full'>('all');
+
+  const filteredCourts = useMemo(() => {
+    if (!courts) return [];
+    if (statusFilter === 'all') return courts;
+    return courts.filter((c) => c.status === statusFilter);
+  }, [courts, statusFilter]);
 
   const handleRefresh = async () => {
     await refetch();
@@ -81,20 +88,45 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Stats bar */}
+          {/* Filter bar */}
           {!isLoading && courts && courts.length > 0 && (
-            <div className="flex flex-wrap gap-3 pt-2">
-              <div className="flex items-center gap-2 bg-primary-foreground/10 px-3 py-1.5 rounded-md">
+            <div className="flex flex-wrap gap-2 pt-2">
+              <button
+                onClick={() => setStatusFilter('all')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors font-display text-sm font-semibold uppercase cursor-pointer ${
+                  statusFilter === 'all' ? 'bg-primary-foreground/25 ring-1 ring-primary-foreground/40' : 'bg-primary-foreground/10 hover:bg-primary-foreground/15'
+                }`}
+              >
+                <Filter className="h-3 w-3" />
+                All ({courts.length})
+              </button>
+              <button
+                onClick={() => setStatusFilter('available')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors font-display text-sm font-semibold uppercase cursor-pointer ${
+                  statusFilter === 'available' ? 'bg-primary-foreground/25 ring-1 ring-primary-foreground/40' : 'bg-primary-foreground/10 hover:bg-primary-foreground/15'
+                }`}
+              >
                 <div className="h-2.5 w-2.5 rounded-full bg-court-available animate-pulse-live" />
-                <span className="font-display text-sm font-semibold uppercase">{availableCount} Open</span>
-              </div>
-              <div className="flex items-center gap-2 bg-primary-foreground/10 px-3 py-1.5 rounded-md">
+                Open ({availableCount})
+              </button>
+              <button
+                onClick={() => setStatusFilter('limited')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors font-display text-sm font-semibold uppercase cursor-pointer ${
+                  statusFilter === 'limited' ? 'bg-primary-foreground/25 ring-1 ring-primary-foreground/40' : 'bg-primary-foreground/10 hover:bg-primary-foreground/15'
+                }`}
+              >
                 <div className="h-2.5 w-2.5 rounded-full bg-court-limited" />
-                <span className="font-display text-sm font-semibold uppercase">{limitedCount} Limited</span>
-              </div>
-              <div className="flex items-center gap-2 bg-primary-foreground/10 px-3 py-1.5 rounded-md">
-                <span className="font-display text-sm font-semibold uppercase">{courts.length} Total</span>
-              </div>
+                Limited ({limitedCount})
+              </button>
+              <button
+                onClick={() => setStatusFilter('full')}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors font-display text-sm font-semibold uppercase cursor-pointer ${
+                  statusFilter === 'full' ? 'bg-primary-foreground/25 ring-1 ring-primary-foreground/40' : 'bg-primary-foreground/10 hover:bg-primary-foreground/15'
+                }`}
+              >
+                <div className="h-2.5 w-2.5 rounded-full bg-court-full" />
+                Full ({courts.filter((c) => c.status === 'full').length})
+              </button>
             </div>
           )}
         </div>
@@ -121,8 +153,8 @@ const Index = () => {
                   <div key={i} className="h-36 rounded-lg bg-muted animate-pulse" />
                 ))}
               </div>
-            ) : courts && courts.length > 0 ? (
-              <CourtList courts={courts} />
+            ) : filteredCourts.length > 0 ? (
+              <CourtList courts={filteredCourts} />
             ) : (
               <div className="text-center py-16 text-muted-foreground">
                 <p className="font-display text-lg uppercase">No courts found</p>
@@ -134,8 +166,8 @@ const Index = () => {
           <TabsContent value="map" className="mt-6">
             {isLoading ? (
               <div className="h-[500px] rounded-lg bg-muted animate-pulse" />
-            ) : courts && courts.length > 0 ? (
-              <CourtMap courts={courts} />
+            ) : filteredCourts.length > 0 ? (
+              <CourtMap courts={filteredCourts} />
             ) : (
               <div className="text-center py-16 text-muted-foreground">
                 <p className="font-display text-lg uppercase">No courts found</p>
