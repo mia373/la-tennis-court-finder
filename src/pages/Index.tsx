@@ -153,8 +153,8 @@ const Index = () => {
                   <div key={i} className="h-36 rounded-lg bg-muted animate-pulse" />
                 ))}
               </div>
-            ) : courts && courts.length > 0 ? (
-              <CourtList courts={courts} />
+            ) : filteredCourts.length > 0 ? (
+              <CourtList courts={filteredCourts} />
             ) : (
               <div className="text-center py-16 text-muted-foreground">
                 <p className="font-display text-lg uppercase">No courts found</p>
