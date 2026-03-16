@@ -1,73 +1,85 @@
-# Welcome to your Lovable project
+# West LA Courts — Live Tennis Court Finder
 
-## Project info
+A real-time web app that aggregates tennis court availability across West Los Angeles, so players can find and book open courts without checking multiple sites.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Live demo:** _coming soon_
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## What it does
 
-**Use Lovable**
+- Scrapes court availability data on demand via a Supabase Edge Function
+- Displays courts in a filterable, sortable **list view** with live status badges (Open / Limited / Full)
+- Shows court locations on an **interactive satellite map** (Leaflet) with color-coded markers and booking popups
+- **Auto-refreshes** every 5 minutes — no manual reload needed
+- Links directly to each court's official booking page
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech stack
 
-**Use your preferred IDE**
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, TypeScript, Vite |
+| Styling | Tailwind CSS, shadcn/ui (Radix UI) |
+| Data fetching | TanStack Query (React Query) |
+| Backend / DB | Supabase (Postgres + Edge Functions) |
+| Maps | Leaflet.js with Esri satellite tiles |
+| Routing | React Router v6 |
+| Testing | Vitest, Testing Library |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Architecture highlights
 
-Follow these steps:
+- **`useCourts` hook** — wraps TanStack Query to fetch from a Supabase view (`public_court_availability`) with a 5-minute polling interval
+- **`scrape-courts` Edge Function** — triggered on demand from the UI; scrapes source sites and upserts results into Supabase
+- **`CourtMap`** — manages Leaflet map lifecycle via `useRef`/`useEffect`, rebuilds markers reactively when court data changes
+- **`CourtList`** — client-side filtering (by status) and sorting (by name, price, availability) using `useMemo`
+
+---
+
+## Getting started
+
+**Prerequisites:** Node.js 18+, a Supabase project with the `public_court_availability` view and `scrape-courts` Edge Function deployed.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 1. Clone
+git clone https://github.com/mia373/la-tennis-court-finder.git
+cd la-tennis-court-finder
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 3. Set environment variables
+cp .env.example .env   # add your Supabase URL + anon key
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 4. Start dev server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Other scripts:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+npm run build     # production build
+npm run test      # run tests with Vitest
+npm run lint      # ESLint
+```
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project structure
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```
+src/
+├── components/
+│   ├── CourtList.tsx      # filterable card grid
+│   ├── CourtMap.tsx       # Leaflet map with reactive markers
+│   └── ui/                # shadcn/ui primitives
+├── hooks/
+│   └── useCourts.ts       # data fetching + polling
+├── integrations/
+│   └── supabase/          # generated Supabase client + types
+└── pages/
+    └── Index.tsx          # main page: filter bar, tabs, sort controls
+```
