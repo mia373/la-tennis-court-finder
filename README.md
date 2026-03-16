@@ -2,7 +2,12 @@
 
 A real-time web app that aggregates tennis court availability across West Los Angeles, so players can find and book open courts without checking multiple sites.
 
-**Live demo:** _coming soon_
+---
+
+## Screenshots
+
+![List view](public/screenshots/tennis1.png)
+![Map view](public/screenshots/tennis2.png)
 
 ---
 
